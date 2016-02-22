@@ -1,0 +1,72 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+group = 'com.blackducksoftware.protex.sdkclient'
+version = '1.1.1'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+ext.cxfVersion = '2.7.6'
+
+repositories {
+	// TODO Change this to JCenter
+	maven { url "http://artifactory.blackducksoftware.com:8081/artifactory/blackduck-staging-repos" }
+}
+
+task sourcesJar(type:Jar){
+	from sourceSets.main.allSource
+	classifier = 'sources'
+}
+	
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	from javadoc.destinationDir
+	classifier = 'javadoc'
+}
+    
+jar {
+	from "${rootDir}/LICENSE.txt"
+}
+
+task listAllDependencies(type: DependencyReportTask) {}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+eclipse {
+	classpath {
+		defaultOutputDir = file('build/classes/main')
+	}
+}
+
+dependencies {
+    compile group: 'org.apache.cxf', name: 'cxf-api', version: cxfVersion
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			// TODO Change this to public staging repository
+			repository(url: 'http://artifactory.blackducksoftware.com:8081/artifactory/bds-suite-repo') {
+				authentication(userName: "builder", password: "builder")
+			}
+			pom.project {
+				organization {
+					name 'Black Duck Software'
+					url 'http://www.blackducksoftware.com/'
+				}
+				licenses {
+					license {
+						name 'GNU Lesser General Public License v2.1 only'
+						url 'http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html'
+					}
+				}
+			}
+		}
+	}
+}
+
+task wrapper(type: Wrapper) { gradleVersion = '2.5' }
