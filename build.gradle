@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 
 group = 'com.blackducksoftware.protex.sdkclient'
-version = '1.1.1'
+version = '1.1.2-SNAPSHOT'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
